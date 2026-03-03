@@ -7,19 +7,20 @@ def main():
 
     server_socket = socket.create_server(("localhost", 6379), reuse_port=True)
 
-    # Block untill we recieve an incoming connection
-    connection, address = server_socket.accept() 
-    
     while True:
+        # Block untill we recieve an incoming connection
+        connection, address = server_socket.accept() 
+        
+        while True:
+            BUFFER_SIZE_BYTES = 1024
+            data = connection.recv(BUFFER_SIZE_BYTES)
 
-        data = connection.recv(1024)
-
-        if data:
-            # send response to the client
-            connection.sendall(b"+PONG\r\n")
-        else:
-            # data is empty means connection is closed
-            break
+            if data:
+                # send response to the client
+                connection.sendall(b"+PONG\r\n")
+            else:
+                # data is empty means connection is closed
+                break
 
 
 

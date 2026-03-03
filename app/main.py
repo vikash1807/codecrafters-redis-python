@@ -2,16 +2,21 @@ import socket  # noqa: F401
 import threading
 
 def handle_connection(conn):
-    while True:
-        BUFFER_SIZE_BYTES = 1024
-        data = conn.recv(BUFFER_SIZE_BYTES)
+    try:
+        while True:
+            BUFFER_SIZE_BYTES = 1024
+            chunk = conn.recv(BUFFER_SIZE_BYTES)
 
-        if data:
-            # send response to the client
-            conn.sendall(b"+PONG\r\n")
-        else:
-            # data is empty means connection is closed
-            break
+            if not chunk:
+                # chunk is empty means connection is closed
+                break
+            else:
+                # send response to the client
+                conn.sendall(b"+PONG\r\n")
+    except:
+        pass
+    finally:
+        conn.close()
 
 
 def main():

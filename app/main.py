@@ -28,4 +28,4 @@ async def main():
         await asyncio.run(handle_client(connection))
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

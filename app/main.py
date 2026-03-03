@@ -24,7 +24,7 @@ def main():
     connection, address = server_socket.accept() 
     
     # add handle_client in thread to handle multiple clients concurrently
-    thread = threading.Thread(target=handle_client, args=(connection))
+    thread = threading.Thread(target=handle_client, args=(connection,))
     thread.start()
 
 

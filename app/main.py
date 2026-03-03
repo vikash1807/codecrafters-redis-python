@@ -12,7 +12,7 @@ def main():
     
     while True:
 
-        data = connection.recv(4)
+        data = connection.recv(1024)
 
         if data:
             # send response to the client

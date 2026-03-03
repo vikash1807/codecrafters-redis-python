@@ -1,20 +1,20 @@
 import socket  # noqa: F401
-import asyncio
+import threading
 
-async def handle_client(connection):
+def handle_connection(conn):
     while True:
         BUFFER_SIZE_BYTES = 1024
-        data = await connection.recv(BUFFER_SIZE_BYTES)
+        data = conn.recv(BUFFER_SIZE_BYTES)
 
         if data:
             # send response to the client
-            await connection.sendall(b"+PONG\r\n")
+            conn.sendall(b"+PONG\r\n")
         else:
             # data is empty means connection is closed
             break
 
 
-async def main():
+def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!")
 
@@ -22,11 +22,12 @@ async def main():
 
     while True:
         # Block untill we recieve an incoming connection
-        connection, address = server_socket.accept() 
+        conn, address = server_socket.accept() 
         
-        # run handle_client in asynchronus to handle multiple clients concurrently
-        loop = asyncio.get_running_loop()
-        loop.run_in_executor(None, handle_client, (connection))
+        # add handle_connection in thread to handle multiple clients concurrently
+        thread = threading.Thread(target=handle_connection, args=(conn,))
+        thread.start()
+
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

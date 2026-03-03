@@ -12,6 +12,7 @@ def main():
 
     print(f"accepted connection from {address}")
 
+    # send response to the client
     connection.sendall(b"+PONG\r\n")
 
 

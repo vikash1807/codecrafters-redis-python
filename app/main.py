@@ -25,7 +25,8 @@ async def main():
         connection, address = server_socket.accept() 
         
         # run handle_client in asynchronus to handle multiple clients concurrently
-        await asyncio.run(handle_client(connection))
+        loop = asyncio.get_running_loop()
+        loop.run_in_executor(handle_client, (connection))
 
 if __name__ == "__main__":
     asyncio.run(main())

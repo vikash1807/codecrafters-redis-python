@@ -23,9 +23,7 @@ def main():
     # Block untill we recieve an incoming connection
     connection, address = server_socket.accept() 
     
-    loop = asyncio.get_running_loop()
-
-    loop.run_in_executor(handle_client, (connection))
+    asyncio.run(handle_client(connection))
 
 
 

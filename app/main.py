@@ -10,12 +10,8 @@ def main():
     # Block untill we recieve an incoming connection
     connection, address = server_socket.accept() 
 
-    print(f"accedpted connection from {address}")
+    print(f"accepted connection from {address}")
 
-    # Read data
-    data = connection.recv(b"PING")
-
-    # send data to a connection
     connection.sendall(b"+PONG\r\n")
 
 

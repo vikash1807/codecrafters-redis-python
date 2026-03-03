@@ -1,7 +1,7 @@
 import socket  # noqa: F401
-import threading
+import asyncio
 
-def handle_client(connection):
+async def handle_client(connection):
     while True:
         BUFFER_SIZE_BYTES = 1024
         data = connection.recv(BUFFER_SIZE_BYTES)
@@ -24,10 +24,8 @@ def main():
         # Block untill we recieve an incoming connection
         connection, address = server_socket.accept() 
         
-        # add handle_client in thread to handle multiple clients concurrently
-        thread = threading.Thread(target=handle_client, args=(connection,))
-        thread.start()
-
+        # run handle_client in asynchronus to handle multiple clients concurrently
+        asyncio.run(handle_client(connection))
 
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ async def handle_client(connection):
             break
 
 
-def main():
+async def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!")
 
@@ -25,7 +25,7 @@ def main():
         connection, address = server_socket.accept() 
         
         # run handle_client in asynchronus to handle multiple clients concurrently
-        asyncio.run(handle_client(connection))
+        await asyncio.run(handle_client(connection))
 
 if __name__ == "__main__":
     main()

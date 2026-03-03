@@ -8,13 +8,17 @@ def main():
     server_socket = socket.create_server(("localhost", 6379), reuse_port=True)
 
     # Block untill we recieve an incoming connection
-    while(True):
-        connection, address = server_socket.accept() 
+    connection, address = server_socket.accept() 
+    
+    while True:
 
-        print(f"accepted connection from {address}")
+        data = connection.recv()
 
-        # send response to the client
-        connection.sendall(b"+PONG\r\n")
+        while data:
+            # send response to the client
+            connection.sendall(b"+PONG\r\n")
+        
+        break
 
 
 if __name__ == "__main__":

@@ -12,13 +12,15 @@ def main():
     
     while True:
 
-        data = connection.recv()
+        data = connection.recv(4)
 
-        while data:
+        if data:
             # send response to the client
             connection.sendall(b"+PONG\r\n")
-        
-        break
+        else:
+            # data is empty means connection is closed
+            break
+
 
 
 if __name__ == "__main__":

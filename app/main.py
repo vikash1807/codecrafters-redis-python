@@ -4,11 +4,11 @@ import asyncio
 async def handle_client(connection):
     while True:
         BUFFER_SIZE_BYTES = 1024
-        data = connection.recv(BUFFER_SIZE_BYTES)
+        data = await connection.recv(BUFFER_SIZE_BYTES)
 
         if data:
             # send response to the client
-            connection.sendall(b"+PONG\r\n")
+            await connection.sendall(b"+PONG\r\n")
         else:
             # data is empty means connection is closed
             break

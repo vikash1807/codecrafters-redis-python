@@ -20,12 +20,13 @@ def main():
 
     server_socket = socket.create_server(("localhost", 6379), reuse_port=True)
 
-    # Block untill we recieve an incoming connection
-    connection, address = server_socket.accept() 
-    
-    # add handle_client in thread to handle multiple clients concurrently
-    thread = threading.Thread(target=handle_client, args=(connection,))
-    thread.start()
+    while True:
+        # Block untill we recieve an incoming connection
+        connection, address = server_socket.accept() 
+        
+        # add handle_client in thread to handle multiple clients concurrently
+        thread = threading.Thread(target=handle_client, args=(connection,))
+        thread.start()
 
 
 if __name__ == "__main__":

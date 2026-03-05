@@ -1,33 +1,64 @@
 import asyncio
 
-def decode_bulk_string(cmd : str):
-    split_cmd : list = cmd.split("\r\n")
+def parse_resp(cmd : str):
+    lines : list = cmd.split("\r\n")
+    idx = 0
+
+
+    if lines[idx].startswith('*'):
+
+        count = int(lines[idx][1:])
+        idx += 1
+
+        elements = []
+        for _ in range(count):
+            # parse bulk string
+            if lines[idx].startswith('$'):
+                length = int(lines[idx][1:])
+                idx += 1
+
+                if length:
+                    value = lines[idx]
+                    idx += 1
+                    elements.append(value)
+                else:
+                    elements.append(None)
+            
+            else:
+                idx += 1
+        
+        return elements
+    return []
+
+
+def encode_bulk_string(value: str) -> bytes:
+    return f"${len(value)}\r\n{value}\r\n".encode()
 
     
-
-
-
 async def handle_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
 
     while True:
+        addr, port = writer.get_extra_info("peername")
+        print(f"message from {addr}:{port}")
+
         data = await reader.read(1024)
 
         if not data:
             break
 
-        command = data.decode()
-        print(f"Recieved command : {command}")
+        # parse command
+        elements = parse_resp(data)
 
-        # parsed_msg = parse_command(command)
-        cmd, msg = command.split(" ")
+        if not elements:
+            continue
 
-        addr, port = writer.get_extra_info("peername")
-
-        print(f"message from {addr}:{port}: {msg}")
+        cmd = elements[0].upper()
+        args = elements[1:]
 
         if cmd == "ECHO":
-            writer.write(msg.encode())
-            await writer.drain()
+            if args:
+                writer.write(encode_bulk_string(args[0]))
+                await writer.drain()
         
         elif cmd == "PING":
             writer.write(b"+PONG\r\n")

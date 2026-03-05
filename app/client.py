@@ -8,7 +8,8 @@ PORT = 6379
 async def run_client():
     reader, writer = await asyncio.open_connection(HOST, PORT)
     
-    writer.write(b'ECHO hey')
+    # writer.write(b"*3\r\n$3\r\nSET\r\n$9\r\nraspberry\r\n$5\r\nmango\r\n")
+    writer.write(b"*2\r\n$3\r\nGET\r\n$9\r\nraspberry\r\n")
     await writer.drain()
 
     while True:

@@ -68,13 +68,13 @@ async def handle_connection(reader: asyncio.StreamReader, writer: asyncio.Stream
             await writer.drain()
 
         elif cmd == "SET":
-            cmd_dict[args[1]] = args[2]
+            cmd_dict[args[0]] = args[1]
             writer.write(b'+OK\r\n')
-            writer.drain()
+            await writer.drain()
         
         elif cmd == "GET":
-            writer.write(cmd_dict[args[1]].encode())
-            writer.drain
+            writer.write(cmd_dict[args[0]].encode())
+            await writer.drain()
             
 
 

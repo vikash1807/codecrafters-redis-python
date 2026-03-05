@@ -1,11 +1,10 @@
 import asyncio
 
-cmd_dict = {}
+STORAGE = {}
 
 def parse_resp(cmd : str):
     lines : list = cmd.split("\r\n")
     idx = 0
-
 
     if lines[idx].startswith('*'):
 
@@ -37,12 +36,16 @@ def encode_bulk_string(value: str) -> bytes:
     return f"${len(value)}\r\n{value}\r\n".encode()
 
     
-async def handle_connection(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+async def handle_client(
+    reader: asyncio.StreamReader,
+    writer: asyncio.StreamWriter
+) -> None:
 
     while True:
         addr, port = writer.get_extra_info("peername")
         print(f"message from {addr}:{port}")
 
+        # read data from client
         data = await reader.read(1024)
 
         if not data:
@@ -58,36 +61,33 @@ async def handle_connection(reader: asyncio.StreamReader, writer: asyncio.Stream
         cmd = elements[0].upper()
         args = elements[1:]
 
-        if cmd == "ECHO":
-            if args:
-                writer.write(encode_bulk_string(args[0]))
-                await writer.drain()
-        
-        elif cmd == "PING":
-            writer.write(b"+PONG\r\n")
-            await writer.drain()
+        match cmd:
+            case "PING":
+                writer.write(b"+PONG\r\n")
 
-        elif cmd == "SET":
-            cmd_dict[args[0]] = args[1]
-            writer.write(b'+OK\r\n')
-            await writer.drain()
-        
-        elif cmd == "GET":
-            writer.write(encode_bulk_string(cmd_dict[args[0]]))
-            await writer.drain()
+            case "ECHO":
+                if args:
+                    writer.write(encode_bulk_string(args[0]))
+
+            case "SET":
+                STORAGE[args[0]] = args[1]
+                writer.write(b'+OK\r\n')
             
-
+            case "GET":
+                writer.write(encode_bulk_string(STORAGE[args[0]]))
+            
+        await writer.drain()
 
     writer.close()
     await writer.wait_closed()
 
 
-async def main():
+async def run_server():
     HOST = '127.0.0.1'
     PORT = 6379
 
     server = await asyncio.start_server(
-        handle_connection,
+        handle_client,
         host=HOST,
         port=PORT
     )
@@ -99,5 +99,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.new_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(run_server())

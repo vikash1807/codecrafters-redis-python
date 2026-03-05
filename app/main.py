@@ -1,9 +1,9 @@
 import asyncio
 
-# def parse_command(command : str):
-#     cmd, msg = command.split(" ")
+def decode_bulk_string(cmd : str):
+    split_cmd : list = cmd.split("\r\n")
 
-#     if cmd == 'ECHO':
+    
 
 
 

@@ -74,7 +74,11 @@ async def handle_client(
                 writer.write(b'+OK\r\n')
             
             case "GET":
-                writer.write(encode_bulk_string(STORAGE[args[0]]))
+                key = args[0]
+                if key not in STORAGE:
+                    writer.write(b'$-1\r\n')
+                else:
+                    writer.write(encode_bulk_string(STORAGE[key]))
             
         await writer.drain()
 

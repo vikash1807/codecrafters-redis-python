@@ -1,5 +1,7 @@
 import asyncio
 
+cmd_dict = {}
+
 def parse_resp(cmd : str):
     lines : list = cmd.split("\r\n")
     idx = 0
@@ -64,6 +66,15 @@ async def handle_connection(reader: asyncio.StreamReader, writer: asyncio.Stream
         elif cmd == "PING":
             writer.write(b"+PONG\r\n")
             await writer.drain()
+
+        elif cmd == "SET":
+            cmd_dict[args[1]] = args[2]
+            writer.write(b'+OK\r\n')
+            writer.drain()
+        
+        elif cmd == "GET":
+            writer.write(cmd_dict[args[1]].encode())
+            writer.drain
             
 
 

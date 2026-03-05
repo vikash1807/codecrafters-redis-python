@@ -47,8 +47,8 @@ async def handle_connection(reader: asyncio.StreamReader, writer: asyncio.Stream
             break
 
         # parse command
-        print("data : ", data)
-        elements = parse_resp(data)
+        cmd = data.decode()
+        elements = parse_resp(cmd)
 
         if not elements:
             continue

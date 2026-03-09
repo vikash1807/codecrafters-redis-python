@@ -56,7 +56,7 @@ def set_cmd(args: List[str])-> str:
         "expiry_time" : expiry_time
     }
 
-    return '$2\r\nOK\r\n'
+    return "+OK\r\n"
 
 
 def get_cmd(args):

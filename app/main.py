@@ -46,9 +46,9 @@ def set_cmd(args: List[str])-> str:
     value = args[1]
 
     if args[2] == 'EX':
-        expiry_time = int(current_time_utc) + 1000*expiry_time
+        expiry_time = int(current_time_utc * 1000) + 1000*expiry_time
     else:
-        expiry_time = int(current_time_utc) + expiry_time
+        expiry_time = int(current_time_utc * 1000) + expiry_time
 
     
     STORAGE[key] = {
@@ -60,12 +60,11 @@ def set_cmd(args: List[str])-> str:
 
 
 def get_cmd(args):
-    current_time_utc = datetime.now(timezone.utc).timestamp()
+    current_time_utc = int(datetime.now(timezone.utc).timestamp() * 1000)
     expiry_time = STORAGE[args[0]]["expiry_time"]
 
     if current_time_utc > expiry_time:
         return None
-
     else:
         return STORAGE[args[0]]["value"]
 

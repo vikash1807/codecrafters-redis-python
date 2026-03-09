@@ -112,7 +112,7 @@ async def handle_client(
             case "SET":
                 # STORAGE[args[0]] = args[1]
                 response = set_cmd(args=args)
-                writer.write(response.endcode())
+                writer.write(response.encode())
             
             case "GET":
                 response = set_cmd(args=args)

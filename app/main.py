@@ -1,4 +1,7 @@
+from datetime import datetime, timezone
+from typing import List
 import asyncio
+
 
 STORAGE = {}
 
@@ -31,8 +34,45 @@ def parse_resp(cmd : str):
         return elements
     return []
 
+def set_cmd(args: List[str])-> str:
+    
+    if len(args) < 4:
+        raise ValueError("Command doesn't have enough parameters.")
+    
+    current_time_utc = datetime.now(timezone.utc).timestamp()
+    expiry_time = int(args[3])    # in miliseconds
+
+    key = args[0]
+    value = args[1]
+
+    if args[2] == 'EX':
+        expiry_time = int(current_time_utc) + 1000*expiry_time
+    else:
+        expiry_time = int(current_time_utc) + expiry_time
+
+    
+    STORAGE[key] = {
+        "value" : value,
+        "expiry_time" : expiry_time
+    }
+
+    return b'OK\r\n'
+
+
+def get_cmd(args):
+    current_time_utc = datetime.now(timezone.utc).timestamp()
+    expiry_time = STORAGE[args[0]]["expiry_time"]
+
+    if current_time_utc > expiry_time:
+        return None
+
+    else:
+        return STORAGE[args[0]]["value"]
+
 
 def encode_bulk_string(value: str) -> bytes:
+    if value is None:
+        return f"$-1\r\n"
     return f"${len(value)}\r\n{value}\r\n".encode()
 
     
@@ -70,15 +110,18 @@ async def handle_client(
                     writer.write(encode_bulk_string(args[0]))
 
             case "SET":
-                STORAGE[args[0]] = args[1]
-                writer.write(b'+OK\r\n')
+                # STORAGE[args[0]] = args[1]
+                response = set_cmd(args=args)
+                writer.write(response)
             
             case "GET":
-                key = args[0]
-                if key not in STORAGE:
-                    writer.write(b'$-1\r\n')
-                else:
-                    writer.write(encode_bulk_string(STORAGE[key]))
+                response = set_cmd(args=args)
+                writer.write(encode_bulk_string(response))
+                # key = args[0]
+                # if key not in STORAGE:
+                #     writer.write(b'$-1\r\n')
+                # else:
+                #     writer.write(encode_bulk_string(STORAGE[key]))
             
         await writer.drain()
 

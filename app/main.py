@@ -56,7 +56,7 @@ def set_cmd(args: List[str])-> str:
         "expiry_time" : expiry_time
     }
 
-    return b'OK\r\n'
+    return 'OK\r\n'
 
 
 def get_cmd(args):
@@ -112,7 +112,7 @@ async def handle_client(
             case "SET":
                 # STORAGE[args[0]] = args[1]
                 response = set_cmd(args=args)
-                writer.write(response)
+                writer.write(response.endcode())
             
             case "GET":
                 response = set_cmd(args=args)

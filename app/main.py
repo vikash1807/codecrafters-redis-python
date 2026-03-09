@@ -115,7 +115,7 @@ async def handle_client(
                 writer.write(response.encode())
             
             case "GET":
-                response = set_cmd(args=args)
+                response = get_cmd(args=args)
                 writer.write(encode_bulk_string(response))
                 # key = args[0]
                 # if key not in STORAGE:

@@ -69,7 +69,7 @@ def get_cmd(args):
         return STORAGE[args[0]]["value"]
 
 
-def encode_bulk_string(value: str) -> bytes:
+def encode_bulk_string(value) -> bytes:
     if value is None:
         return f"$-1\r\n"
     return f"${len(value)}\r\n{value}\r\n".encode()

@@ -1,3 +1,4 @@
+import math
 from datetime import datetime, timezone
 from typing import List
 import asyncio
@@ -36,14 +37,23 @@ def parse_resp(cmd : str):
 
 def set_cmd(args: List[str])-> str:
     
-    if len(args) < 4:
+    if len(args) < 2:
         raise ValueError("Command doesn't have enough parameters.")
     
+    key = args[0]
+    value = args[1]
+
+    if len(args == 2):
+        STORAGE[key] = {
+            "value" : value,
+            "expiry_time" : math.inf
+        }
+
+        return "+OK\r\n"
+
     current_time_utc = datetime.now(timezone.utc).timestamp()
     expiry_time = int(args[3])    # in miliseconds
 
-    key = args[0]
-    value = args[1]
 
     if args[2] == 'EX':
         expiry_time = int(current_time_utc * 1000) + 1000*expiry_time

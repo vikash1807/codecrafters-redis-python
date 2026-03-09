@@ -43,7 +43,7 @@ def set_cmd(args: List[str])-> str:
     key = args[0]
     value = args[1]
 
-    if len(args == 2):
+    if len(args) == 2:
         STORAGE[key] = {
             "value" : value,
             "expiry_time" : math.inf

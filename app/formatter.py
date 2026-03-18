@@ -14,6 +14,8 @@ class ResponseFormatter:
            return self._format_int(data)
         
         if isinstance(data, str):
+            if data == 'OK':
+                return b'+OK\r\n'
             return self._format_string(data)
         
         if isinstance(data, list):

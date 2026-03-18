@@ -29,7 +29,8 @@ class RedisServer:
                 break
                 
             cmd, *args = CommandParser(data).parse()
-            cmd = cmd.lower()
+            
+            cmd, *args = [x.lower() for x in [cmd, *args]]
 
             print(f"Recieved command {cmd} with args: {args}.")
 

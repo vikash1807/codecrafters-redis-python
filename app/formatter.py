@@ -7,6 +7,7 @@ class ResponseFormatter:
         return self._format(data) + b'\r\n'
     
     def _format(self, data):
+        print(data)
         if data is None:
             return b'$-1'
         

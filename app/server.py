@@ -29,14 +29,13 @@ class RedisServer:
                 break
                 
             cmd, *args = CommandParser(data).parse()
-            
-            cmd, *args = [x.lower() for x in [cmd, *args]]
+            cmd = cmd.lower()
 
             print(f"Recieved command {cmd} with args: {args}.")
 
             try:
                 if cmd in self._commands:
-                    self._commands[cmd.lower()](*args)
+                    self._commands[cmd](*args)
                 else:
                     null_data = response_formatter.format(None)
                     self._writer.write(null_data)
@@ -52,7 +51,7 @@ class RedisServer:
         await self._writer.wait_closed()
 
     def _ping(self, *args):
-        self._writer.write(response_formatter.format("PONG"))
+        self._writer.write(response_formatter.format("PONG", simple_str=True))
 
     
     def _echo(self, value):
@@ -60,28 +59,25 @@ class RedisServer:
         self._writer.write(echo)
     
     def _set(self, key, value, ext_key=None, ext_value=None):
+        if ext_key is not None:
+            ext_key = ext_key.lower()
 
         if ext_key == 'px':
             loop = asyncio.get_running_loop()
             loop.call_later(
                 int(ext_value)/1000,
-                store.pop,
-                key
+                lambda: store.pop(key, None)
             )
         if ext_key == 'ex':
             loop = asyncio.get_running_loop()
             loop.call_later(
                 int(ext_value),
-                store.pop,
-                key
+                lambda: store.pop(key, None)
             )
         
         store[key] = value
-        self._writer.write(response_formatter.format('OK'))
+        self._writer.write(response_formatter.format('OK', simple_str=True))
 
     def _get(self, key):
         value = store.get(key)
         self._writer.write(response_formatter.format(value))
-
-
-        

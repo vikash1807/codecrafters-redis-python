@@ -3,10 +3,10 @@ class ResponseFormatter:
     def error(self, data) -> bytes:
         return f"-{data}\r\n".encode()
     
-    def format(self,data) -> bytes:
-        return self._format(data) + b'\r\n'
+    def format(self, data, simple_str=False) -> bytes:
+        return self._format(data, simple_str=simple_str) + b'\r\n'
     
-    def _format(self, data):
+    def _format(self, data, simple_str=False):
         print(data)
         if data is None:
             return b'$-1'
@@ -15,8 +15,8 @@ class ResponseFormatter:
            return self._format_int(data)
         
         if isinstance(data, str):
-            if data == 'OK':
-                return b'+OK'
+            if simple_str:
+                return f"+{data}".encode()
             return self._format_string(data)
         
         if isinstance(data, list):
@@ -32,4 +32,4 @@ class ResponseFormatter:
     def _format_array(self, data: list)-> bytes:
         length = len(data)
         formatted = [self._format(element) for element in data]
-        return f"*{length}\r\n".encode() + b"\r\n".join(formatted)  
+        return f"*{length}\r\n".encode() + b"\r\n".join(formatted)

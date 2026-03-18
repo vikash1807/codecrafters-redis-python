@@ -58,25 +58,33 @@ class RedisServer:
         echo = response_formatter.format(value)
         self._writer.write(echo)
     
-    def _set(self, key, value, ext_key=None, ext_value=None):
+    # def _set(self, key, value, ext_key=None, ext_value=None):
 
+    #     if ext_key == 'px':
+    #         loop = asyncio.get_running_loop()
+    #         loop.call_later(
+    #             int(ext_value)/1000,
+    #             store.pop,
+    #             key
+    #         )
+    #     if ext_key == 'ex':
+    #         loop = asyncio.get_running_loop()
+    #         loop.call_later(
+    #             int(ext_value),
+    #             store.pop,
+    #             key
+    #         )
+        
+    #     store[key] = value
+    #     self._writer.write(response_formatter.format('OK'))
+
+    def _set(self, key, value, ext_key=None, ext_value=None):
         if ext_key == 'px':
             loop = asyncio.get_running_loop()
-            loop.call_later(
-                int(ext_value)/1000,
-                store.pop,
-                key
-            )
-        if ext_key == 'ex':
-            loop = asyncio.get_running_loop()
-            loop.call_later(
-                int(ext_value),
-                store.pop,
-                key
-            )
-        
+            loop.call_later(int(ext_value)/1000, store.pop, key)
+            
         store[key] = value
-        self._writer.write(response_formatter.format('OK'))
+        self._writer.write(response_formatter.format("OK"))
 
     def _get(self, key):
         value = store.get(key)

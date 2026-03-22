@@ -5,6 +5,7 @@ from app.formatter import ResponseFormatter
 
 response_formatter = ResponseFormatter()
 store = {}
+store_list = {}
 
 class RedisServer:
 
@@ -16,7 +17,8 @@ class RedisServer:
             "ping" : self._ping,
             "echo": self._echo,
             "set": self._set,
-            "get": self._get
+            "get": self._get,
+            "rpush": self._rpush,
         }
 
 
@@ -81,3 +83,12 @@ class RedisServer:
     def _get(self, key):
         value = store.get(key)
         self._writer.write(response_formatter.format(value))
+
+    def _rpush(self, list_key, value):
+        if store_list.get(list_key) is None:
+            store_list[list_key] = []
+        
+        store_list[list_key].append(value)
+        
+        list_length = len(store_list[list_key])
+        self._writer.write(response_formatter.format(list_length))

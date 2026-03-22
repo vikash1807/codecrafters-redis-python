@@ -84,11 +84,15 @@ class RedisServer:
         value = store.get(key)
         self._writer.write(response_formatter.format(value))
 
-    def _rpush(self, list_key, value):
+    def _rpush(self, *args):
+
+        list_key, *values = args
+
         if store_list.get(list_key) is None:
             store_list[list_key] = []
         
-        store_list[list_key].append(value)
+        for value in values:
+            store_list[list_key].append(value)
         
         list_length = len(store_list[list_key])
         self._writer.write(response_formatter.format(list_length))

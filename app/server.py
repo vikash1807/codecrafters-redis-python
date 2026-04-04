@@ -118,4 +118,4 @@ class RedisServer:
         result = data[start:end+1]
         print(result)
 
-        self._writer.write(response_formatter(result))
+        self._writer.write(response_formatter.format(result))

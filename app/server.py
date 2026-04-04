@@ -19,6 +19,7 @@ class RedisServer:
             "set": self._set,
             "get": self._get,
             "rpush": self._rpush,
+            "lrange": self._lrange,
         }
 
 
@@ -96,3 +97,20 @@ class RedisServer:
         
         list_length = len(store_list[list_key])
         self._writer.write(response_formatter.format(list_length))
+
+    def _lrange(self, *args):
+        
+        list_key, start, end = args
+
+        len_list_key = len(list_key)
+        start = max(0, start)
+        end = min(end, len_list_key)
+
+        result = []
+        if not store_list.get(list_key) or start > end:
+            self._writer.write(response_formatter.format(result))
+            return
+
+        result = result[start:end+1]
+
+        self._writer.write(response_formatter(result))

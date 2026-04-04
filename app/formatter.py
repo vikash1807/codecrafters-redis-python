@@ -31,5 +31,7 @@ class ResponseFormatter:
     
     def _format_array(self, data: list)-> bytes:
         length = len(data)
+        if not length:
+            return b'*0'
         formatted = [self._format(element) for element in data]
         return f"*{length}\r\n".encode() + b"\r\n".join(formatted)

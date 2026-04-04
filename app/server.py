@@ -117,5 +117,6 @@ class RedisServer:
             return
 
         result = data[start:end+1]
+        print(result)
 
         self._writer.write(response_formatter(result))

@@ -101,16 +101,18 @@ class RedisServer:
     def _lrange(self, *args):
         
         list_key, start, end = args
+        
+        data = store_list.get(list_key, [])
 
-        len_list_key = len(list_key)
+        len_data = len(data)
         start = max(0, start)
-        end = min(end, len_list_key)
+        end = min(end, len_data)
 
         result = []
-        if not store_list.get(list_key) or start > end:
+        if not data or start > end:
             self._writer.write(response_formatter.format(result))
             return
 
-        result = result[start:end+1]
+        result = data[start:end+1]
 
         self._writer.write(response_formatter(result))

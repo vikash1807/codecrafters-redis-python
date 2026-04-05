@@ -113,7 +113,6 @@ class RedisServer:
             start = max(0, length + start)
         if end < 0:
             end = max(0, length + end)
-        print(data, list_key, start, end, length)
 
         result = []
         if (not data) or (start > end):

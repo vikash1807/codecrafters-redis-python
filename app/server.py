@@ -110,9 +110,9 @@ class RedisServer:
         end = min(int(end),length)
 
         if start < 0:
-            start = length + start
+            start = max(0, length + start)
         if end < 0:
-            end = length + end
+            end = max(0, length + end)
         print(data, list_key, start, end, length)
 
         result = []

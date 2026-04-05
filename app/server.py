@@ -105,10 +105,15 @@ class RedisServer:
         
         data = store_list.get(list_key, [])
 
-        len_data = len(data)
-        start = max(0, int(start))
-        end = min(int(end),len_data)
-        print(data, list_key, start, end, len_data)
+        length = len(data)
+        start = int(start)
+        end = min(int(end),length)
+
+        if start < 0:
+            start = length + start
+        if end < 0:
+            end = length + end
+        print(data, list_key, start, end, length)
 
         result = []
         if (not data) or (start > end):

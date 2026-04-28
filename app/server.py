@@ -19,6 +19,7 @@ class RedisServer:
             "set": self._set,
             "get": self._get,
             "rpush": self._rpush,
+            "lpush": self._lpush,
             "lrange": self._lrange,
         }
 

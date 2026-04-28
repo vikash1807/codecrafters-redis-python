@@ -21,6 +21,7 @@ class RedisServer:
             "rpush": self._rpush,
             "lpush": self._lpush,
             "lrange": self._lrange,
+            "llen": self._llen,
         }
 
     async def serve(self):
@@ -129,3 +130,9 @@ class RedisServer:
 
         result = data[start:end+1]
         self._writer.write(response_formatter.format(result))
+
+    def _llen(self, *args):
+        list_key = args
+        
+        list_size = len(store_list.get(list_key, []))
+        self._writer.write(response_formatter.format(list_size))

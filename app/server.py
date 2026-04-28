@@ -23,7 +23,6 @@ class RedisServer:
             "lrange": self._lrange,
         }
 
-
     async def serve(self):
         addr = self._writer.get_extra_info("peername")
         while(True):
@@ -87,7 +86,6 @@ class RedisServer:
         self._writer.write(response_formatter.format(value))
 
     def _rpush(self, *args):
-
         list_key, *values = args
 
         if store_list.get(list_key) is None:
@@ -100,7 +98,6 @@ class RedisServer:
         self._writer.write(response_formatter.format(list_length))
 
     def _lpush(self, *args):
-
         list_key, *values = args
 
         if store_list.get(list_key) is None:
@@ -113,10 +110,7 @@ class RedisServer:
         self._writer.write(response_formatter.format(list_length))
 
     def _lrange(self, *args):
-        
         list_key, start, end = args
-
-        
         data = store_list.get(list_key, [])
 
         length = len(data)

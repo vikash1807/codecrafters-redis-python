@@ -131,8 +131,8 @@ class RedisServer:
         result = data[start:end+1]
         self._writer.write(response_formatter.format(result))
 
-    def _llen(self, arg):
-        list_key = arg
+    def _llen(self, *args):
+        list_key = args[0]
         
         list_size = len(store_list.get(list_key, []))
         self._writer.write(response_formatter.format(list_size))

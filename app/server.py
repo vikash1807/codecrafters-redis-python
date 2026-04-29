@@ -140,11 +140,16 @@ class RedisServer:
 
     def _lpop(self, *args):
         key = args[0]
+        count = 1
+
+        if len(args) > 1:
+            count = int(args[1])
+
         data = store_list.get(key, [])
 
         result = None
         if data:
-            result = data[0]
-            store_list[key].pop(0)
+            result = data[:count]
+            store_list[key] = data[count:]
 
         self._writer.write(response_formatter.format(result))

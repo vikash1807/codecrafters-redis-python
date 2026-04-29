@@ -22,6 +22,7 @@ class RedisServer:
             "lpush": self._lpush,
             "lrange": self._lrange,
             "llen": self._llen,
+            "lpop": self._lpop,
         }
 
     async def serve(self):
@@ -87,32 +88,32 @@ class RedisServer:
         self._writer.write(response_formatter.format(value))
 
     def _rpush(self, *args):
-        list_key, *values = args
+        key, *values = args
 
-        if store_list.get(list_key) is None:
-            store_list[list_key] = []
+        if store_list.get(key) is None:
+            store_list[key] = []
         
         for value in values:
-            store_list[list_key].append(value)
+            store_list[key].append(value)
          
-        list_length = len(store_list[list_key])
+        list_length = len(store_list[key])
         self._writer.write(response_formatter.format(list_length))
 
     def _lpush(self, *args):
-        list_key, *values = args
+        key, *values = args
 
-        if store_list.get(list_key) is None:
-            store_list[list_key] = []
+        if store_list.get(key) is None:
+            store_list[key] = []
         
         for value in values:
-            store_list[list_key].insert(0, value)
+            store_list[key].insert(0, value)
          
-        list_length = len(store_list[list_key])
+        list_length = len(store_list[key])
         self._writer.write(response_formatter.format(list_length))
 
     def _lrange(self, *args):
-        list_key, start, end = args
-        data = store_list.get(list_key, [])
+        key, start, end = args
+        data = store_list.get(key, [])
 
         length = len(data)
         start = int(start)
@@ -132,7 +133,18 @@ class RedisServer:
         self._writer.write(response_formatter.format(result))
 
     def _llen(self, *args):
-        list_key = args[0]
+        key = args[0]
         
-        list_size = len(store_list.get(list_key, []))
+        list_size = len(store_list.get(key, []))
         self._writer.write(response_formatter.format(list_size))
+
+    def _lpop(self, *args):
+        key = args[0]
+        data = store_list.get(key, [])
+
+        result = None
+        if data:
+            result = data[0]
+            store_list[key].pop_left()
+
+        self._writer.write(response_formatter.format(result))

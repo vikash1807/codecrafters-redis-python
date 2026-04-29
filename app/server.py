@@ -152,6 +152,6 @@ class RedisServer:
         else:
             if data:
                 result = data[0]
-                store_list[key].pop()
+                store_list[key].pop(0)
             
         self._writer.write(response_formatter.format(result))
